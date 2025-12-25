@@ -62,7 +62,22 @@
                     <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li><a href="{{ route('service-providers.index') }}">Service Providers</a></li>
                     <li><a href="{{ route('categories.index') }}">Kategori</a></li>
-                    <li><a href="javascript:void(0)" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout ({{ auth()->user()->name }})</a></li>
+                    @if(auth()->user()->isAdmin())
+                        <li><a href="{{ route('bookings.index') }}">Riwayat Booking</a></li>
+                    @else
+                        <li><a href="{{ route('bookings.create') }}">Pesan Jasa</a></li>
+                        <li><a href="{{ route('bookings.my') }}">Booking Saya</a></li>
+                    @endif
+                    <li>
+                        <a href="javascript:void(0)" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            Logout 
+                            @if(auth()->user()->isAdmin())
+                                <span style="background: #ef4444; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.3rem;">ADMIN</span>
+                            @else
+                                ({{ auth()->user()->name }})
+                            @endif
+                        </a>
+                    </li>
                 </ul>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf

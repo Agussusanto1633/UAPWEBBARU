@@ -46,12 +46,14 @@
             @endif
 
             <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-                <a href="{{ route('service-providers.edit', $provider->uuid) }}" class="btn btn-success">Edit</a>
-                <form action="{{ route('service-providers.destroy', $provider->uuid) }}" method="POST" style="display: inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                </form>
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('service-providers.edit', $provider->uuid) }}" class="btn btn-success">Edit</a>
+                    <form action="{{ route('service-providers.destroy', $provider->uuid) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                    </form>
+                @endif
             </div>
         </div>
     </div>

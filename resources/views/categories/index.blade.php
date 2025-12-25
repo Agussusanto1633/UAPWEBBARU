@@ -5,7 +5,9 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl">Kategori</h1>
-    <a href="{{ route('categories.create') }}" class="btn btn-primary">+ Tambah Kategori</a>
+    @if(auth()->user()->isAdmin())
+        <a href="{{ route('categories.create') }}" class="btn btn-primary">+ Tambah Kategori</a>
+    @endif
 </div>
 
 <div class="card">
@@ -30,12 +32,14 @@
                         <td>
                             <div class="flex gap-2">
                                 <a href="{{ route('categories.show', $category->uuid) }}" class="btn btn-primary" style="font-size: 0.875rem;">Lihat</a>
-                                <a href="{{ route('categories.edit', $category->uuid) }}" class="btn btn-success" style="font-size: 0.875rem;">Edit</a>
-                                <form action="{{ route('categories.destroy', $category->uuid) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger" style="font-size: 0.875rem;" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                                </form>
+                                @if(auth()->user()->isAdmin())
+                                    <a href="{{ route('categories.edit', $category->uuid) }}" class="btn btn-success" style="font-size: 0.875rem;">Edit</a>
+                                    <form action="{{ route('categories.destroy', $category->uuid) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" style="font-size: 0.875rem;" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

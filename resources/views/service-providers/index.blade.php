@@ -5,7 +5,31 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl">Service Providers</h1>
-    <a href="{{ route('service-providers.create') }}" class="btn btn-primary">+ Tambah Service Provider</a>
+    @if(auth()->user()->isAdmin())
+        <a href="{{ route('service-providers.create') }}" class="btn btn-primary">+ Tambah Service Provider</a>
+    @endif
+</div>
+
+<!-- Filter Kategori -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="GET" action="{{ route('service-providers.index') }}">
+        <div class="flex gap-2" style="align-items: flex-end;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label for="category">Filter Kategori</label>
+                <select id="category" name="category" onchange="this.form.submit()">
+                    <option value="">-- Semua Kategori --</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
+                            {{ $cat->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            @if(request('category'))
+                <a href="{{ route('service-providers.index') }}" class="btn btn-secondary">Reset Filter</a>
+            @endif
+        </div>
+    </form>
 </div>
 
 <div class="card">
@@ -38,12 +62,14 @@
                         <td>
                             <div class="flex gap-2">
                                 <a href="{{ route('service-providers.show', $provider->uuid) }}" class="btn btn-primary" style="font-size: 0.875rem;">Lihat</a>
-                                <a href="{{ route('service-providers.edit', $provider->uuid) }}" class="btn btn-success" style="font-size: 0.875rem;">Edit</a>
-                                <form action="{{ route('service-providers.destroy', $provider->uuid) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger" style="font-size: 0.875rem;" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                                </form>
+                                @if(auth()->user()->isAdmin())
+                                    <a href="{{ route('service-providers.edit', $provider->uuid) }}" class="btn btn-success" style="font-size: 0.875rem;">Edit</a>
+                                    <form action="{{ route('service-providers.destroy', $provider->uuid) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" style="font-size: 0.875rem;" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

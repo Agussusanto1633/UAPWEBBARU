@@ -4,20 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
-class ServiceProvider extends Model
+class Booking extends Model
 {
     protected $fillable = [
         'uuid',
-        'name',
+        'user_id',
+        'service_provider_id',
         'category_id',
-        'phone',
-        'email',
-        'address',
-        'description',
-        'photo',
+        'booking_date',
+        'booking_time',
+        'notes',
+        'customer_name',
+        'customer_phone',
+        'customer_address',
+        'status',
+    ];
+
+    protected $casts = [
+        'booking_date' => 'date',
+        'booking_time' => 'datetime',
     ];
 
     /**
@@ -36,12 +43,20 @@ class ServiceProvider extends Model
 
     /**
      * Get the route key for the model.
-     *
-     * @return string
      */
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function serviceProvider(): BelongsTo
+    {
+        return $this->belongsTo(ServiceProvider::class);
     }
 
     public function category(): BelongsTo

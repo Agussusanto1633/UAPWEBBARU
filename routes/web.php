@@ -25,32 +25,60 @@ Route::middleware('guest')->group(function () {
 });
 
 // Protected routes (require authentication)
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:web')->group(function () {
     // Auth
     Route::post('/logout', [AuthWebController::class, 'logout'])->name('logout');
 
-    // Dashboard
+    // Dashboard - accessible by all authenticated users
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Service Providers CRUD (protected routes JWT authentication)
+    // Service Providers - View only for regular users, full CRUD for admin
     Route::prefix('service-providers')->name('service-providers.')->group(function () {
+        // CRUD routes - admin only (harus di atas route dengan parameter)
+        Route::middleware('admin')->group(function () {
+            Route::get('/create', [ServiceProviderWebController::class, 'create'])->name('create');
+            Route::post('/', [ServiceProviderWebController::class, 'store'])->name('store');
+            Route::get('/{uuid}/edit', [ServiceProviderWebController::class, 'edit'])->name('edit');
+            Route::put('/{uuid}', [ServiceProviderWebController::class, 'update'])->name('update');
+            Route::delete('/{uuid}', [ServiceProviderWebController::class, 'destroy'])->name('destroy');
+        });
+        
+        // View routes - accessible by all authenticated users
         Route::get('/', [ServiceProviderWebController::class, 'index'])->name('index');
-        Route::get('/create', [ServiceProviderWebController::class, 'create'])->name('create');
-        Route::post('/', [ServiceProviderWebController::class, 'store'])->name('store');
         Route::get('/{uuid}', [ServiceProviderWebController::class, 'show'])->name('show');
-        Route::get('/{uuid}/edit', [ServiceProviderWebController::class, 'edit'])->name('edit');
-        Route::put('/{uuid}', [ServiceProviderWebController::class, 'update'])->name('update');
-        Route::delete('/{uuid}', [ServiceProviderWebController::class, 'destroy'])->name('destroy');
     });
 
-    // Categories CRUD (protected routes JWT authentication)
+    // Categories - View only for regular users, full CRUD for admin
     Route::prefix('categories')->name('categories.')->group(function () {
+        // CRUD routes - admin only (harus di atas route dengan parameter)
+        Route::middleware('admin')->group(function () {
+            Route::get('/create', [CategoryWebController::class, 'create'])->name('create');
+            Route::post('/', [CategoryWebController::class, 'store'])->name('store');
+            Route::get('/{uuid}/edit', [CategoryWebController::class, 'edit'])->name('edit');
+            Route::put('/{uuid}', [CategoryWebController::class, 'update'])->name('update');
+            Route::delete('/{uuid}', [CategoryWebController::class, 'destroy'])->name('destroy');
+        });
+        
+        // View routes - accessible by all authenticated users
         Route::get('/', [CategoryWebController::class, 'index'])->name('index');
-        Route::get('/create', [CategoryWebController::class, 'create'])->name('create');
-        Route::post('/', [CategoryWebController::class, 'store'])->name('store');
         Route::get('/{uuid}', [CategoryWebController::class, 'show'])->name('show');
-        Route::get('/{uuid}/edit', [CategoryWebController::class, 'edit'])->name('edit');
-        Route::put('/{uuid}', [CategoryWebController::class, 'update'])->name('update');
-        Route::delete('/{uuid}', [CategoryWebController::class, 'destroy'])->name('destroy');
+    });
+
+    // Bookings - User can create and view their own, Admin can view all
+    Route::prefix('bookings')->name('bookings.')->group(function () {
+        // User routes - create booking and view own bookings
+        Route::get('/create', [\App\Http\Controllers\Web\BookingController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Web\BookingController::class, 'store'])->name('store');
+        Route::get('/my-bookings', [\App\Http\Controllers\Web\BookingController::class, 'myBookings'])->name('my');
+        Route::post('/{booking}/cancel', [\App\Http\Controllers\Web\BookingController::class, 'cancel'])->name('cancel');
+        
+        // Admin routes - view all bookings and update status
+        Route::middleware('admin')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Web\BookingController::class, 'index'])->name('index');
+            Route::post('/{booking}/status', [\App\Http\Controllers\Web\BookingController::class, 'updateStatus'])->name('update-status');
+        });
+
+        // Shared routes - view booking detail (admin or owner)
+        Route::get('/{booking}', [\App\Http\Controllers\Web\BookingController::class, 'show'])->name('show');
     });
 });

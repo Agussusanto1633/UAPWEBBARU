@@ -13,13 +13,19 @@ class ServiceProviderWebController extends Controller
     /**
      * Display a listing of service providers
      */
-    public function index()
+    public function index(Request $request)
     {
-        $serviceProviders = ServiceProvider::with('category')
-            ->latest()
-            ->paginate(10);
+        $query = ServiceProvider::with('category');
+        
+        // Filter by category if provided
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category_id', $request->category);
+        }
+        
+        $serviceProviders = $query->latest()->paginate(10);
+        $categories = Category::all();
 
-        return view('service-providers.index', compact('serviceProviders'));
+        return view('service-providers.index', compact('serviceProviders', 'categories'));
     }
 
     /**
@@ -37,15 +43,31 @@ class ServiceProviderWebController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|min:3|max:100',
             'category_id' => 'required|exists:categories,id',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'description' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'phone' => 'nullable|string|regex:/^[0-9+\-\(\)\s]+$/|min:10|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:500',
+            'description' => 'nullable|string|max:1000',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+        ], [
+            'name.required' => 'Nama service provider wajib diisi',
+            'name.min' => 'Nama minimal 3 karakter',
+            'name.max' => 'Nama maksimal 100 karakter',
+            'category_id.required' => 'Kategori wajib dipilih',
+            'category_id.exists' => 'Kategori tidak valid',
+            'phone.regex' => 'Format nomor telepon tidak valid (hanya angka, +, -, (, ), dan spasi)',
+            'phone.min' => 'Nomor telepon minimal 10 digit',
+            'phone.max' => 'Nomor telepon maksimal 20 karakter',
+            'email.email' => 'Format email tidak valid',
+            'address.max' => 'Alamat maksimal 500 karakter',
+            'description.max' => 'Deskripsi maksimal 1000 karakter',
+            'photo.image' => 'File harus berupa gambar',
+            'photo.mimes' => 'Format gambar harus: JPEG, PNG, JPG, GIF, atau WEBP',
+            'photo.max' => 'Ukuran gambar maksimal 2MB'
         ]);
 
-        $data = $request->only(['name', 'category_id', 'phone', 'address', 'description']);
+        $data = $request->only(['name', 'category_id', 'phone', 'email', 'address', 'description']);
 
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('service-providers', 'public');
@@ -86,15 +108,31 @@ class ServiceProviderWebController extends Controller
         $provider = ServiceProvider::where('uuid', $uuid)->firstOrFail();
 
         $validated = $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|min:3|max:100',
             'category_id' => 'required|exists:categories,id',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'description' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'phone' => 'nullable|string|regex:/^[0-9+\-\(\)\s]+$/|min:10|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:500',
+            'description' => 'nullable|string|max:1000',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+        ], [
+            'name.required' => 'Nama service provider wajib diisi',
+            'name.min' => 'Nama minimal 3 karakter',
+            'name.max' => 'Nama maksimal 100 karakter',
+            'category_id.required' => 'Kategori wajib dipilih',
+            'category_id.exists' => 'Kategori tidak valid',
+            'phone.regex' => 'Format nomor telepon tidak valid (hanya angka, +, -, (, ), dan spasi)',
+            'phone.min' => 'Nomor telepon minimal 10 digit',
+            'phone.max' => 'Nomor telepon maksimal 20 karakter',
+            'email.email' => 'Format email tidak valid',
+            'address.max' => 'Alamat maksimal 500 karakter',
+            'description.max' => 'Deskripsi maksimal 1000 karakter',
+            'photo.image' => 'File harus berupa gambar',
+            'photo.mimes' => 'Format gambar harus: JPEG, PNG, JPG, GIF, atau WEBP',
+            'photo.max' => 'Ukuran gambar maksimal 2MB'
         ]);
 
-        $data = $request->only(['name', 'category_id', 'phone', 'address', 'description']);
+        $data = $request->only(['name', 'category_id', 'phone', 'email', 'address', 'description']);
 
         if ($request->hasFile('photo')) {
             if ($provider->photo && Storage::disk('public')->exists($provider->photo)) {

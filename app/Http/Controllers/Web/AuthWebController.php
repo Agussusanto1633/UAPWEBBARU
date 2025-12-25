@@ -30,14 +30,17 @@ class AuthWebController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // Use 'web' guard explicitly for session-based authentication
+        if (Auth::guard('web')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard');
+            
+            // Redirect to intended page or dashboard
+            return redirect()->intended(route('dashboard'));
         }
 
         return back()->withErrors([
             'email' => 'Email atau password salah.',
-        ])->withInput();
+        ])->onlyInput('email');
     }
 
     /**
@@ -60,16 +63,21 @@ class AuthWebController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return back()->withErrors($validator)->onlyInput('name', 'email');
         }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'user', // Default role is user
         ]);
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
+        // Auto login after registration using web guard
+        Auth::guard('web')->login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard')->with('success', 'Registrasi berhasil! Selamat datang.');
     }
 
     /**
@@ -77,7 +85,7 @@ class AuthWebController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

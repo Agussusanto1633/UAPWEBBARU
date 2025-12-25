@@ -1,164 +1,57 @@
 {
   "info": {
-    "name": "Koneksi Jasa API",
-    "description": "API untuk aplikasi Koneksi Jasa - Platform Jasa Cuci Mobil & Service AC",
-    "version": "1.0.0",
+    "name": "Koneksi Jasa - Web API Collection",
+    "description": "API Collection untuk aplikasi Koneksi Jasa - Platform Jasa Cuci Mobil & Service AC\n\n## Fitur:\n- Authentication (Login, Register, Logout)\n- Dashboard\n- Service Providers (User view, Admin CRUD)\n- Categories (User view, Admin CRUD)\n- Bookings (User create/cancel, Admin manage)\n- Role-based access control (User/Admin)\n\n## Base URL:\nhttp://localhost:8000\n\n## Authentication:\n- Session-based authentication untuk web routes\n- CSRF token required untuk POST/PUT/DELETE requests\n\n## Notes:\n- Default user login: admin@koneksi-jasa.com / password (role: admin)\n- UUID digunakan sebagai identifier untuk resource (service-providers, categories)\n- Booking ID digunakan untuk booking routes\n\n## User Roles:\n- **user**: Dapat melihat data, membuat booking, melihat booking sendiri\n- **admin**: Full access, CRUD service-providers/categories, manage semua bookings",
+    "version": "2.0.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8000/api",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "csrf_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "service_provider_uuid",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "category_uuid",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking_id",
+      "value": "",
       "type": "string"
     }
   ],
   "auth": {
     "type": "noauth"
   },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
   "item": [
     {
-      "name": "Service Providers",
+      "name": "1. Public Pages",
       "item": [
         {
-          "name": "Get All Service Providers",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/service-providers?limit=10&page=1&search=&orderBy=id&sortBy=desc&category_id=1",
-              "host": ["{{baseUrl}}"],
-              "path": ["service-providers"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Jumlah data per halaman (1-100)"
-                },
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Halaman yang diminta"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "description": "Pencarian berdasarkan nama, deskripsi, atau alamat"
-                },
-                {
-                  "key": "orderBy",
-                  "value": "id",
-                  "description": "Kolom untuk sorting: id, name, rating, created_at, price_range, updated_at"
-                },
-                {
-                  "key": "sortBy",
-                  "value": "desc",
-                  "description": "Arah sorting: asc, desc"
-                },
-                {
-                  "key": "category_id",
-                  "value": "1",
-                  "description": "Filter berdasarkan kategori (1=Cuci Mobil, 2=Service AC)"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Service Provider by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/service-providers/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["service-providers", "1"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Create Service Provider",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"AutoClean Car Wash\",\n  \"category_id\": 1,\n  \"phone\": \"08123456789\",\n  \"email\": \"autoclean@example.com\",\n  \"address\": \"Jl. Sudirman No. 123, Jakarta Selatan\",\n  \"description\": \"Jasa cuci mobil profesional dengan peralatan modern dan hasil terbaik\",\n  \"price_range\": \"Rp 50.000 - 150.000\",\n  \"rating\": 4.5,\n  \"is_available\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/service-providers",
-              "host": ["{{baseUrl}}"],
-              "path": ["service-providers"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Service Provider",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"AutoClean Car Wash Updated\",\n  \"phone\": \"081234567890\",\n  \"rating\": 4.7,\n  \"is_available\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/service-providers/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["service-providers", "1"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Service Provider",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/service-providers/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["service-providers", "1"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Categories",
-      "item": [
-        {
-          "name": "Get All Categories",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": ["{{baseUrl}}"],
-              "path": ["categories"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "API Info",
-      "item": [
-        {
-          "name": "Root Endpoint",
+          "name": "Home / Landing Page",
           "request": {
             "method": "GET",
             "header": [],
@@ -166,7 +59,794 @@
               "raw": "{{baseUrl}}/",
               "host": ["{{baseUrl}}"],
               "path": [""]
-            }
+            },
+            "description": "Halaman utama yang menampilkan service providers dan categories (Public access)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "Show Login Form",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Menampilkan halaman login (Guest only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "admin@koneksi-jasa.com",
+                  "description": "Email terdaftar"
+                },
+                {
+                  "key": "password",
+                  "value": "password",
+                  "description": "Password minimal 6 karakter"
+                },
+                {
+                  "key": "remember",
+                  "value": "true",
+                  "description": "Remember me (optional)",
+                  "type": "checkbox"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Login dengan email dan password. Redirect ke dashboard setelah sukses."
+          },
+          "response": []
+        },
+        {
+          "name": "Show Register Form",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["register"]
+            },
+            "description": "Menampilkan halaman registrasi (Guest only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "John Doe",
+                  "description": "Nama lengkap (max 255 karakter)"
+                },
+                {
+                  "key": "email",
+                  "value": "john@example.com",
+                  "description": "Email valid dan unique"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "description": "Password minimal 6 karakter"
+                },
+                {
+                  "key": "password_confirmation",
+                  "value": "password123",
+                  "description": "Konfirmasi password harus sama"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["register"]
+            },
+            "description": "Registrasi user baru. Default role adalah 'user'. Auto login setelah registrasi."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["logout"]
+            },
+            "description": "Logout dari session. Redirect ke home page."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Index",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard"]
+            },
+            "description": "Dashboard utama untuk semua authenticated users (User & Admin)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Service Providers",
+      "item": [
+        {
+          "name": "List Service Providers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/service-providers",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-providers"]
+            },
+            "description": "Menampilkan semua service providers (User & Admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "Show Service Provider Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/service-providers/{{service_provider_uuid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-providers", "{{service_provider_uuid}}"]
+            },
+            "description": "Menampilkan detail service provider by UUID (User & Admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Show Create Form",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/service-providers/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-providers", "create"]
+            },
+            "description": "Menampilkan form create service provider (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Create Service Provider",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "AutoClean Car Wash",
+                  "description": "Nama service provider (required)"
+                },
+                {
+                  "key": "category_id",
+                  "value": "1",
+                  "description": "ID kategori (required)"
+                },
+                {
+                  "key": "phone",
+                  "value": "081234567890",
+                  "description": "Nomor telepon (only +, -, (, ), space, min 10 chars)"
+                },
+                {
+                  "key": "email",
+                  "value": "autoclean@example.com",
+                  "description": "Email valid"
+                },
+                {
+                  "key": "address",
+                  "value": "Jl. Sudirman No. 123, Jakarta Selatan",
+                  "description": "Alamat lengkap"
+                },
+                {
+                  "key": "description",
+                  "value": "Jasa cuci mobil profesional dengan peralatan modern",
+                  "description": "Deskripsi layanan"
+                },
+                {
+                  "key": "photo",
+                  "value": "",
+                  "description": "Upload foto (optional, max 2MB)",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/service-providers",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-providers"]
+            },
+            "description": "Membuat service provider baru (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Show Edit Form",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/service-providers/{{service_provider_uuid}}/edit",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-providers", "{{service_provider_uuid}}", "edit"]
+            },
+            "description": "Menampilkan form edit service provider (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Update Service Provider",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "AutoClean Car Wash Updated",
+                  "description": "Nama service provider"
+                },
+                {
+                  "key": "phone",
+                  "value": "081234567890",
+                  "description": "Nomor telepon"
+                },
+                {
+                  "key": "email",
+                  "value": "autoclean.updated@example.com",
+                  "description": "Email"
+                },
+                {
+                  "key": "address",
+                  "value": "Jl. Sudirman No. 456, Jakarta Pusat",
+                  "description": "Alamat"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated description",
+                  "description": "Deskripsi"
+                },
+                {
+                  "key": "photo",
+                  "value": "",
+                  "description": "Upload foto baru (optional)",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/service-providers/{{service_provider_uuid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-providers", "{{service_provider_uuid}}"]
+            },
+            "description": "Update service provider by UUID (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Delete Service Provider",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/service-providers/{{service_provider_uuid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-providers", "{{service_provider_uuid}}"]
+            },
+            "description": "Hapus service provider by UUID (Admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            },
+            "description": "Menampilkan semua categories dengan pagination (User & Admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "Show Category Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{category_uuid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{category_uuid}}"]
+            },
+            "description": "Menampilkan detail category dengan service providers (User & Admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Show Create Form",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "create"]
+            },
+            "description": "Menampilkan form create category (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "Cuci Mobil",
+                  "description": "Nama kategori (required, max 100 karakter)"
+                },
+                {
+                  "key": "description",
+                  "value": "Layanan cuci mobil lengkap dalam dan luar",
+                  "description": "Deskripsi kategori (optional)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            },
+            "description": "Membuat category baru (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Show Edit Form",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{category_uuid}}/edit",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{category_uuid}}", "edit"]
+            },
+            "description": "Menampilkan form edit category (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "Cuci Mobil Premium",
+                  "description": "Nama kategori"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated description",
+                  "description": "Deskripsi kategori"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{category_uuid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{category_uuid}}"]
+            },
+            "description": "Update category by UUID (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{category_uuid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{category_uuid}}"]
+            },
+            "description": "Hapus category by UUID (Admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Bookings",
+      "item": [
+        {
+          "name": "[USER] Show Create Booking Form",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/create?category_id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "create"],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "1",
+                  "description": "Filter service providers by category (optional)"
+                }
+              ]
+            },
+            "description": "Menampilkan form create booking (Authenticated User)"
+          },
+          "response": []
+        },
+        {
+          "name": "[USER] Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service_provider_id",
+                  "value": "1",
+                  "description": "ID service provider (required)"
+                },
+                {
+                  "key": "booking_date",
+                  "value": "2025-12-30",
+                  "description": "Tanggal booking (>= hari ini, format YYYY-MM-DD)"
+                },
+                {
+                  "key": "booking_time",
+                  "value": "10:00",
+                  "description": "Waktu booking (format HH:MM)"
+                },
+                {
+                  "key": "customer_name",
+                  "value": "John Doe",
+                  "description": "Nama customer (required, min 3, max 100 karakter)"
+                },
+                {
+                  "key": "customer_phone",
+                  "value": "081234567890",
+                  "description": "Nomor telepon (required, min 10, max 20 karakter)"
+                },
+                {
+                  "key": "customer_address",
+                  "value": "Jl. Contoh No. 123",
+                  "description": "Alamat customer (optional, max 500 karakter)"
+                },
+                {
+                  "key": "notes",
+                  "value": "Mohon dicuci dengan detail",
+                  "description": "Catatan tambahan (optional, max 500 karakter)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            },
+            "description": "Membuat booking baru (Authenticated User). Status default: pending"
+          },
+          "response": []
+        },
+        {
+          "name": "[USER] My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/my-bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "my-bookings"]
+            },
+            "description": "Menampilkan semua booking milik user yang sedang login dengan pagination"
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            },
+            "description": "Menampilkan semua bookings dari semua users (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Show Booking Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{booking_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{booking_id}}"]
+            },
+            "description": "Menampilkan detail booking. Hanya admin atau pemilik booking yang bisa akses."
+          },
+          "response": []
+        },
+        {
+          "name": "[ADMIN] Update Booking Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "status",
+                  "value": "confirmed",
+                  "description": "Status: pending, confirmed, completed, cancelled"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{booking_id}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{booking_id}}", "status"]
+            },
+            "description": "Update status booking (Admin only)\n\nOptions:\n- pending: Menunggu konfirmasi\n- confirmed: Booking dikonfirmasi\n- completed: Booking selesai\n- cancelled: Booking dibatalkan"
+          },
+          "response": []
+        },
+        {
+          "name": "[USER] Cancel Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{booking_id}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{booking_id}}", "cancel"]
+            },
+            "description": "Batalkan booking dengan status 'pending' (User hanya bisa cancel booking sendiri)"
           },
           "response": []
         }

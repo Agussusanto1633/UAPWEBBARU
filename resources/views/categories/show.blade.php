@@ -49,12 +49,14 @@
     </div>
 
     <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-        <a href="{{ route('categories.edit', $category->uuid) }}" class="btn btn-success">Edit Kategori</a>
-        <form action="{{ route('categories.destroy', $category->uuid) }}" method="POST" style="display: inline;">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-        </form>
+        @if(auth()->user()->isAdmin())
+            <a href="{{ route('categories.edit', $category->uuid) }}" class="btn btn-success">Edit Kategori</a>
+            <form action="{{ route('categories.destroy', $category->uuid) }}" method="POST" style="display: inline;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+            </form>
+        @endif
     </div>
 </div>
 @endsection
